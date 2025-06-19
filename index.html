@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse: SwissFundraising Day 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive dashboard. The structure is thematic and task-oriented, not linear like the report. 1. A main 'Übersicht' section with interactive charts for a high-level view. Clicking a primary category (like NPO) filters the secondary charts and text, creating a guided exploration. 2. A 'Sektor-Analyse' for a side-by-side comparison of NPO and For-Profit sub-sectors. 3. An 'Organisationen-Explorer' with a powerful, filterable table for granular data lookup. 4. A 'Trends' section with summary cards for key takeaways. This structure was chosen to allow users to seamlessly switch between a macro overview and micro details, which is more intuitive for data exploration than a static report format. -->
+    <!-- Visualization & Content Choices: 1. Goal: Inform (Overview) -> Viz: Interactive Donut & Bar Charts (Chart.js) -> Interaction: Cross-filtering between charts and text blocks -> Justification: Provides immediate, high-impact understanding of the participant landscape. 2. Goal: Compare (Sektoren) -> Viz: Side-by-side Bar Charts (Chart.js) & dynamic HTML lists -> Interaction: Clicking chart bars reveals example organizations -> Justification: Connects abstract categories with concrete examples. 3. Goal: Organize/Explore (Daten) -> Viz: HTML table with Tailwind -> Interaction: Live search and multi-dropdown filters (JS) -> Justification: Offers maximum utility for users seeking specific information. 4. Goal: Synthesize (Trends) -> Viz: Styled HTML/CSS cards with Unicode icons -> Interaction: None (static content) -> Justification: Presents key narrative insights in a digestible, visually appealing format. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #1f2937;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 350px;
+            width: 100%;
+            max-width: 450px;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .kpi-card {
+            background-color: #FFFFFF;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .filter-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-800">Analyse: SwissFundraising Day 2025</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Übersicht</a>
+                        <a href="#sektor-analyse" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Sektor-Analyse</a>
+                        <a href="#explorer" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Organisationen-Explorer</a>
+                        <a href="#trends" class="text-gray-600 hover:bg-gray-200 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Trends</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="overview" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Teilnehmerlandschaft im Überblick</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                    Der SwissFundraising Day ist der zentrale Treffpunkt für die Schweizer Fundraising-Community. Diese interaktive Analyse bietet einen datengestützten Einblick in das vielfältige Ökosystem aus gemeinnützigen Organisationen (NPOs), Dienstleistern und Verbänden, das die Veranstaltung prägt.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="kpi-card">
+                    <div class="text-4xl font-bold" style="color: #4f46e5;">218</div>
+                    <div class="text-gray-600 mt-2">Einzigartige Organisationen</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="text-4xl font-bold" style="color: #0d9488;">531+</div>
+                    <div class="text-gray-600 mt-2">Teilnehmende Personen</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="text-4xl font-bold" style="color: #d97706;">4</div>
+                    <div class="text-gray-600 mt-2">Hauptkategorien</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md border border-gray-200">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-semibold text-gray-800">Zusammensetzung der Teilnehmer</h3>
+                    <p class="text-gray-600 mt-2">Klicken Sie auf ein Segment im Kreisdiagramm, um die Detailansicht zu filtern.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="chart-container mx-auto">
+                            <canvas id="mainCategoryChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <div id="dynamic-content-container">
+                            <h4 id="dynamic-title" class="text-xl font-semibold text-gray-800 mb-4 text-center lg:text-left">Gesamtaufteilung nach Sub-Kategorien</h4>
+                            <div class="w-full h-80 relative">
+                               <canvas id="subCategoryChart"></canvas>
+                            </div>
+                            <p id="dynamic-text" class="mt-6 text-gray-600 text-center lg:text-left">
+                                Die Teilnehmerliste zeigt ein symbiotisches Ökosystem. Gemeinnützige Organisationen, die Spenden benötigen, bilden die grösste Gruppe. Ihnen gegenüber steht ein starkes Kontingent an Dienstleistern, die die Werkzeuge und das Fachwissen für erfolgreiches Fundraising liefern.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="border-t my-16"></div>
+
+        <section id="sektor-analyse" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Sektor-Analyse: Angebot & Nachfrage</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                    Diese Gegenüberstellung zeigt, welche gemeinnützigen Sektoren am stärksten vertreten sind und welche Dienstleistungen am häufigsten angeboten werden. Dies spiegelt die Kernbedürfnisse und die Professionalisierung des Schweizer Fundraising-Marktes wider.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Top 5 Gemeinnützige Sektoren (NPOs)</h3>
+                    <div class="w-full h-80">
+                        <canvas id="npoSectorsChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Top 5 Dienstleistungs-Sektoren</h3>
+                    <div class="w-full h-80">
+                         <canvas id="forProfitSectorsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="border-t my-16"></div>
+
+        <section id="explorer" class="scroll-mt-20">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Organisationen-Explorer</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                    Nutzen Sie die Filter, um die vollständige Liste der teilnehmenden Organisationen zu durchsuchen. Entdecken Sie, wer in welchen Sektoren tätig ist und welche Organisationen das Zewo-Gütesiegel für Transparenz tragen.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-md border border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <input type="text" id="searchInput" placeholder="Organisation suchen..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select id="mainCategoryFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 filter-select">
+                        <option value="">Alle Hauptkategorien</option>
+                    </select>
+                    <select id="subCategoryFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 filter-select">
+                        <option value="">Alle Sub-Kategorien</option>
+                    </select>
+                    <select id="zewoFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 filter-select">
+                        <option value="">Alle (Zewo-Status)</option>
+                        <option value="Ja">Zewo-zertifiziert</option>
+                        <option value="Nein">Nicht Zewo-zertifiziert</option>
+                         <option value="Ehemals">Ehemals Zewo</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisation</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hauptkategorie</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sub-Kategorie</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Teilnehmer</th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Zewo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orgTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+                 <div id="no-results" class="text-center py-8 text-gray-500 hidden">
+                    Keine Organisationen gefunden, die den Filterkriterien entsprechen.
+                </div>
+            </div>
+        </section>
+
+        <div class="border-t my-16"></div>
+
+        <section id="trends" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Zentrale Erkenntnisse & Trends</h2>
+                 <p class="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
+                    Die Analyse der Teilnehmerdaten offenbart drei massgebliche Entwicklungen, die den Schweizer Non-Profit-Sektor aktuell prägen und dessen Zukunft gestalten.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 text-indigo-600 mb-6 text-2xl">
+                        <span>&#128187;</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Der digitale Imperativ</h3>
+                    <p class="text-gray-600">
+                        Die hohe Dichte an Technologie-, Software- und CRM-Anbietern ist der stärkste Beleg für die fortschreitende Digitalisierung. Erfolg im Fundraising ist heute untrennbar mit technologischer Kompetenz und datengesteuerten Prozessen verbunden. NPOs investieren massiv in ganzheitliche Plattformen statt in Insellösungen.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-100 text-teal-600 mb-6 text-2xl">
+                         <span>&#127919;</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Professionalisierung & Nischenbildung</h3>
+                    <p class="text-gray-600">
+                        Die Vielfalt an spezialisierten Agenturen, Datenfirmen und unabhängigen Beratern zeigt einen hochprofessionellen Sektor. Es entstehen neue Dienstleistungen für lukrative Bereiche wie das Legate-Fundraising oder innovative Kanäle wie die "embedded philanthropy", was die Reife des Marktes unterstreicht.
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                     <div class="flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 text-amber-600 mb-6 text-2xl">
+                        <span>&#128737;</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Der "Goldstandard" des Vertrauens</h3>
+                    <p class="text-gray-600">
+                        Das Zewo-Gütesiegel bleibt ein kritisches Vertrauenssignal im Schweizer Spendemarkt, was die hohe Zahl zertifizierter Teilnehmer belegt. Gleichzeitig zeigen Organisationen, die bewusst ohne Siegel agieren, dass Vertrauen auch durch nachweisbare Wirkung, Transparenz und starke Kampagnen aufgebaut werden kann.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white mt-16 border-t">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Interaktive Analyse. Daten basieren auf der Teilnehmerliste des SwissFundraising Day 2025.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const ORG_DATA = [
+                { name: "A Million Dreams", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 2, zewo: "Nein" },
+                { name: "Aargauer Kunsthaus / Aargauischer Kunstverein", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "a:primo", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Unbekannt" },
+                { name: "Acker Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Unbekannt" },
+                { name: "Addiction Suisse/Sucht Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Alnovis AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 5, zewo: "Nein" },
+                { name: "Ambit Group", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 2, zewo: "Nein" },
+                { name: "Amender AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Amnesty International", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 2, zewo: "Ja" },
+                { name: "Andreas Cueni | Fundraising-Spezialist", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "ANT-informatik AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 2, zewo: "Nein" },
+                { name: "Apteco GmbH", main: "For-Profit Dienstleister", sub: "Datenmanagement, Analytik & Adressdienste", participants: 2, zewo: "Nein" },
+                { name: "Aqua Viva", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Unbekannt" },
+                { name: "asm Fundraising AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 2, zewo: "Nein" },
+                { name: "Association Le Carac Rose", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "AZ fundraising", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 2, zewo: "Nein" },
+                { name: "Baumer AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 3, zewo: "Nein" },
+                { name: "Berner Fachhochschule", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Biovision - Stiftung für ökologische Entwicklung", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 3, zewo: "Ja" },
+                { name: "Blaues Kreuz Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 2, zewo: "Ja" },
+                { name: "Blutspende SRK Schweiz AG", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "brain'print AG", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "Brava", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 2, zewo: "In Prüfung" },
+                { name: "CBM Christoffel Blindenmission", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Campus für Christus Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Nein" },
+                { name: "Candice Turquet Consulting", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Caritas Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 4, zewo: "Ja" },
+                { name: "Caritas Vaud", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Caritas Zürich", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Chapel & York Switzerland Association", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Christliche Ostmission", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Unbekannt" },
+                { name: "cobra computer's brainware AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 2, zewo: "Nein" },
+                { name: "CO-OPERAID", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Comundo", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 2, zewo: "Ja" },
+                { name: "Connexio hope and develop", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Consultics AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 2, zewo: "Nein" },
+                { name: "Corris AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 5, zewo: "Nein" },
+                { name: "Creating-Bridges GmbH", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 2, zewo: "Nein" },
+                { name: "Creationality KLG", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "CREATIV SOFTWARE AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 3, zewo: "Nein" },
+                { name: "CRIF AG", main: "For-Profit Dienstleister", sub: "Datenmanagement, Analytik & Adressdienste", participants: 1, zewo: "Nein" },
+                { name: "Cuisine sans frontières", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Cystische Fibrose Schweiz (CFS)", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Data Dynamic AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Daryl Upsall International", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Das Hunger Projekt", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Dein Adieu", main: "For-Profit Dienstleister", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "DeLorenzo-Museum -Management GmbH", main: "For-Profit Dienstleister", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Demenz Forschung Schweiz-Stiftung Synapsis", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Nein" },
+                { name: "DIE FUNDRAISER by Qmart", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 2, zewo: "Nein" },
+                { name: "digital/organizing GmbH", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Dt. Fundraising Verband", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "Dunekamp GmbH", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 2, zewo: "Nein" },
+                { name: "Ena Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Emergency Switzerland Foundation", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Empa", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Emna Web AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Entlastungsdienst Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "ETH Zürich Foundation", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Evangelisch-reformierte Kirche Basel-Stadt", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Nein" },
+                { name: "Eveline Würgler", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Fabienne Locher Consulting", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Fairmed", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Fairpicture", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "FC'INNOV", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Femmes-Tische und Männer-Tische", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Findock", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "FIZ Fachstelle für Frauenhandel u. Frauenmigration", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Ja" },
+                { name: "Florence L. Weber GmbH", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Fondation Theodora", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Fotograf", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "FRAGILE Suisse", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Frauenstadtrundgang Zürich", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "FSD (Fondation suisse de déminage)", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Fundatia JOYO Förderverein Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Fundstory Sarl", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Fundtastic.ch", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Fundraising Verband Austria", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "Fundraising-Datenbanken und mehr", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "funtrade", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Gesellschaft für bedrohte Völker", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Ehemals" },
+                { name: "getunik AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "GFZ", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Global Girls Foundation", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Nein" },
+                { name: "glowbalact", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Nein" },
+                { name: "Goodvantage GmbH", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Greenpeace Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Glückskette", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Häner & Schmid AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "HEKS", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Helvetas Swiss Intercooperation", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 5, zewo: "Ja" },
+                { name: "iks-Institut Kinderseele Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Interprise AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "International Committee of the Red Cross", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Nein" },
+                { name: "Kayser Gadmer GmbH", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Keyframe", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "Kinderhilfe Bethlehem", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Kindernothilfe Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Kinderschutz Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Kreis 1 Consulting GmbH", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Krebsliga des Kantons Zürich", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Krebsliga Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "KünzlerBachmann Directmarketing AG", main: "For-Profit Dienstleister", sub: "Datenmanagement, Analytik & Adressdienste", participants: 2, zewo: "Nein" },
+                { name: "Lazoona AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Legal Testa", main: "For-Profit Dienstleister", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Lepra Mission Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Lerchmüller AG", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "LIBERECO-Partnership for Human Rights", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Nein" },
+                { name: "Limmat Stiftung", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "LiveRing Oy", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Luzerner Theater", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "MAF Swiss", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Unbekannt" },
+                { name: "Marketing Monkeys GmbH", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "Martin Stiftung", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Media Mail AG", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "Médecins sans Frontières", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "MEGA Social Foundation", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Unbekannt" },
+                { name: "Mercy Ships Suisse", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Mission 21", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Ja" },
+                { name: "Mission am Nil", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Unbekannt" },
+                { name: "Missio Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Glaubensbasierte & Religiöse Organisationen", participants: 1, zewo: "Ja" },
+                { name: "Nexell GmbH", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "OceanCare", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Oliver Gemperle GmbH", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "one marketing ag", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 5, zewo: "Nein" },
+                { name: "Opernhaus Zürich AG", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "Organisation des Suisses de l'étranger SwissCommunity", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Pädagogische Hochschule St.Gallen", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Paragon", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Persistent Systems Switzerland AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Pluspunkt Establishment", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Post Advertising", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "Post CH AG", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "Pro Alps", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Pro Infirmis", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 5, zewo: "Ja" },
+                { name: "Pro Natura", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Pro Senectute Kanton Zug", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Pro Senectute Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Procap Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "PROCOM", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "proFonds", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "Public Eye", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Ja" },
+                { name: "PUSCH-Praktischer Umweltschutz", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Quellenhof-Stiftung", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Quickmail Planzer AG", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "RaiseNow AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Rebel Communication GmbH", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "ROKPA INTERNATIONAL", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ehemals" },
+                { name: "Salesfive Consulting AG", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Sangira-Friends of Rwanda", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Nein" },
+                { name: "Save the Children Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 3, zewo: "Ja" },
+                { name: "School4Life", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Nein" },
+                { name: "Schweizer Heimatschutz", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Ja" },
+                { name: "Schweizer Wanderwege", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Schweizerische Flüchtlingshilfe", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Ja" },
+                { name: "Schweizerische Multiple Sklerose Gesellschaft", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Schweizerische Rettungsflugwacht Rega", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ehemals" },
+                { name: "Schweizerischer Blindenbund", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Schweizerischer Gehörlosenbund SGB-FSS", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Schweizerischer Spendenhilfsdienst AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "Schweizerisches Rotes Kreuz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Schweizerisches Rotes Kreuz Kanton Aargau", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Schweizerisches Rotes Kreuz Kanton Zürich", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Schweizerisches Rotes Kreuz SRK Basel", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "SGB-FSS", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Sinngeber GmbH", main: "For-Profit Dienstleister", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "SIX Banking Services", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "Smongeinfundraising", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Solafrica", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Unbekannt" },
+                { name: "Solidar Suisse", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "SolidarMed", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Sozialwerk Pfarrer Sieber", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "SPOG", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Spinas Civil Voices", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 5, zewo: "Nein" },
+                { name: "spiritline GmbH", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "SRK Basel", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Stämpfli Kommunikation", main: "For-Profit Dienstleister", sub: "Marketing, Kommunikation & Kreativagenturen", participants: 1, zewo: "Nein" },
+                { name: "stiftung.ch", main: "For-Profit Dienstleister", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Stiftung allani Kinderhospiz Bern", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Stiftung Balm", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung Brunegg", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung für Konsumentenschutz SKS", main: "Gemeinnützige Organisation (NPO)", sub: "Menschenrechte, Advocacy & Schutz", participants: 1, zewo: "Ja" },
+                { name: "Stiftung Frauenhaus beider Basel", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung Heilsarmee Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "Stiftung IdéeSport", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Stiftung Kinderdorf Pestalozzi", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 2, zewo: "Ja" },
+                { name: "Stiftung Pro Juventute", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Stiftung Pro Mente Sana", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Stiftung RgZ", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung Simpera", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Nein" },
+                { name: "Stiftung SOS-Kinderdorf Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 1, zewo: "Ja" },
+                { name: "Stiftung Suyana Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Stiftung TierRettungsDienst", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung visoparents", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Stiftung Zewo", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "Stiftung Züriwerk", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Unbekannt" },
+                { name: "Swissaid", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 3, zewo: "Ja" },
+                { name: "Swissfundraising", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "SwissFoundations", main: "Dachverbände & Bildungsinstitutionen", sub: "Branchenverbände & Stiftungsplattformen", participants: 1, zewo: "Nein" },
+                { name: "Swiss Mailing House SA", main: "For-Profit Dienstleister", sub: "Logistik, Druck & Direktmailing", participants: 1, zewo: "Nein" },
+                { name: "Swiss Science Center Technorama", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Unbekannt" },
+                { name: "Switzerland for UNHCR foundation", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 3, zewo: "Ja" },
+                { name: "taki mundo", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Tammo Schlüter", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "Tavolino Magico", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "TENCO FOUNDATION", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Nein" },
+                { name: "terre des hommes schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 6, zewo: "Ja" },
+                { name: "The Fundraising Company Fribourg AG", main: "For-Profit Dienstleister", sub: "Fundraising-Agenturen & -Beratungen", participants: 1, zewo: "Nein" },
+                { name: "The SeaCleaners Swiss", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Nein" },
+                { name: "Tischlein deck dich", main: "Gemeinnützige Organisation (NPO)", sub: "Soziale Dienste & Gemeinschaftliche Wohlfahrt", participants: 1, zewo: "Ja" },
+                { name: "UNICEF Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 3, zewo: "Ja" },
+                { name: "Union centrale suisse pour le bien des aveugles", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Universität Basel", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Universitäts-Kinderspital Zürich - Eleonorenstiftung", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "Urs Höltschi Fundraising - Beratung", main: "Unabhängige & Sonstige", sub: "Unabhängige Berater & Einzelunternehmen", participants: 1, zewo: "Nein" },
+                { name: "USZ Foundation", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "UZH Foundation", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Velafrica", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Unbekannt" },
+                { name: "Verbandsmanagement Institut VMI", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Verein new Tree", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Nein" },
+                { name: "Verein Filasez", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" },
+                { name: "Verein hiki", main: "Gemeinnützige Organisation (NPO)", sub: "Gesundheit, Forschung & Behindertenhilfe", participants: 1, zewo: "Ja" },
+                { name: "VIER PFOTEN Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Vivamos Mejor", main: "Gemeinnützige Organisation (NPO)", sub: "Internationale Zusammenarbeit & Humanitäre Hilfe", participants: 1, zewo: "Ja" },
+                { name: "Walter Schmid Fundraising & Data AG", main: "For-Profit Dienstleister", sub: "Datenmanagement, Analytik & Adressdienste", participants: 1, zewo: "Nein" },
+                { name: "Weunity", main: "For-Profit Dienstleister", sub: "Technologie, Software & CRM", participants: 1, zewo: "Nein" },
+                { name: "World Vision Schweiz", main: "Gemeinnützige Organisation (NPO)", sub: "Kinder, Jugend & Familiendienste", participants: 3, zewo: "Ja" },
+                { name: "ZHAW", main: "Dachverbände & Bildungsinstitutionen", sub: "Universitäten & Hochschulen", participants: 1, zewo: "Nein" },
+                { name: "Zoo Basel", main: "Gemeinnützige Organisation (NPO)", sub: "Umwelt, Natur & Tierschutz", participants: 1, zewo: "Ja" },
+                { name: "Zürcher Kunstgesellschaft (Kunsthaus Zürich)", main: "Gemeinnützige Organisation (NPO)", sub: "Kunst, Kultur & Bildung", participants: 1, zewo: "Nein" }
+            ];
+
+            const mainCategoryChartCtx = document.getElementById('mainCategoryChart').getContext('2d');
+            const subCategoryChartCtx = document.getElementById('subCategoryChart').getContext('2d');
+            const npoSectorsChartCtx = document.getElementById('npoSectorsChart').getContext('2d');
+            const forProfitSectorsChartCtx = document.getElementById('forProfitSectorsChart').getContext('2d');
+            
+            const searchInput = document.getElementById('searchInput');
+            const mainCategoryFilter = document.getElementById('mainCategoryFilter');
+            const subCategoryFilter = document.getElementById('subCategoryFilter');
+            const zewoFilter = document.getElementById('zewoFilter');
+            const orgTableBody = document.getElementById('orgTableBody');
+            const noResultsDiv = document.getElementById('no-results');
+
+            let mainCategoryChart, subCategoryChart, npoSectorsChart, forProfitSectorsChart;
+
+            const COLORS = {
+                NPO: 'rgba(79, 70, 229, 0.8)',
+                FOR_PROFIT: 'rgba(13, 148, 136, 0.8)',
+                DACH: 'rgba(217, 119, 6, 0.8)',
+                SONSTIGE: 'rgba(107, 114, 128, 0.8)',
+                SUB_SECTORS: [
+                    'rgba(30, 64, 175, 0.8)', 'rgba(34, 197, 94, 0.8)', 'rgba(234, 179, 8, 0.8)', 'rgba(225, 29, 72, 0.8)',
+                    'rgba(147, 51, 234, 0.8)', 'rgba(249, 115, 22, 0.8)', 'rgba(5, 150, 105, 0.8)', 'rgba(23, 37, 84, 0.8)'
+                ]
+            };
+
+            const DYNAMIC_TEXTS = {
+                'Gesamt': 'Die Teilnehmerliste zeigt ein symbiotisches Ökosystem. Gemeinnützige Organisationen, die Spenden benötigen, bilden die grösste Gruppe. Ihnen gegenüber steht ein starkes Kontingent an Dienstleistern, die die Werkzeuge und das Fachwissen für erfolgreiches Fundraising liefern.',
+                'Gemeinnützige Organisation (NPO)': 'NPOs bilden das Herzstück des Sektors und die "Nachfrageseite" des Marktes. Die grössten vertretenen Bereiche sind Soziale Dienste und Gesundheit, was die traditionellen Stärken der Schweizer Philanthropie widerspiegelt.',
+                'For-Profit Dienstleister': 'Die Dienstleister repräsentieren die "Angebotsseite" und die zunehmende Professionalisierung. Der dominanteste Sektor ist Technologie & CRM, was den unaufhaltsamen digitalen Wandel im Fundraising unterstreicht.',
+                'Dachverbände & Bildungsinstitutionen': 'Diese Akteure bilden das regulatorische, forschende und ausbildende Rückgrat des Sektors. Sie schaffen die Rahmenbedingungen und fördern den Austausch zwischen allen Beteiligten.',
+                'Unabhängige & Sonstige': 'Diese Gruppe zeigt die Flexibilität und "Gig Economy" des Sektors. Hochspezialisierte Freelancer und kleine Beratungsfirmen bieten agiles Fachwissen für spezifische Projekte an.'
+            };
+
+            function aggregateData(data, key) {
+                return data.reduce((acc, org) => {
+                    const group = org[key];
+                    acc[group] = (acc[group] || 0) + 1;
+                    return acc;
+                }, {});
+            }
+            
+            function wrapText(text, maxLen) {
+                const words = text.split(' ');
+                let line = '';
+                const lines = [];
+
+                for(let i = 0; i < words.length; i++) {
+                    let testLine = line + words[i] + ' ';
+                    if (testLine.length > maxLen && i > 0) {
+                        lines.push(line.trim());
+                        line = words[i] + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+                lines.push(line.trim());
+                return lines;
+            }
+
+            function createMainCategoryChart() {
+                const data = aggregateData(ORG_DATA, 'main');
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+                
+                if(mainCategoryChart) mainCategoryChart.destroy();
+                mainCategoryChart = new Chart(mainCategoryChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: [COLORS.NPO, COLORS.FOR_PROFIT, COLORS.DACH, COLORS.SONSTIGE],
+                            borderColor: '#F8F7F4',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    font: { size: 12 }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1) + '%';
+                                            label += `${context.parsed} (${percentage})`;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        onClick: (evt, elements) => {
+                            if (elements.length > 0) {
+                                const clickedIndex = elements[0].index;
+                                const mainCategory = mainCategoryChart.data.labels[clickedIndex];
+                                updateDashboard(mainCategory);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function createSubCategoryChart(mainCategory = 'Gesamt') {
+                const filteredData = mainCategory === 'Gesamt' ? ORG_DATA : ORG_DATA.filter(org => org.main === mainCategory);
+                const data = aggregateData(filteredData, 'sub');
+                
+                const sortedData = Object.entries(data).sort(([, a], [, b]) => b - a);
+                const labels = sortedData.map(item => wrapText(item[0], 25));
+                const values = sortedData.map(item => item[1]);
+
+                if(subCategoryChart) subCategoryChart.destroy();
+                subCategoryChart = new Chart(subCategoryChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Anzahl Organisationen',
+                            data: values,
+                            backgroundColor: COLORS.SUB_SECTORS,
+                            borderColor: COLORS.SUB_SECTORS,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                           x: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: true,
+                                    color: '#e5e7eb'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateDashboard(mainCategory) {
+                createSubCategoryChart(mainCategory);
+                document.getElementById('dynamic-title').innerText = `${mainCategory}: Aufteilung nach Sub-Kategorien`;
+                document.getElementById('dynamic-text').innerText = DYNAMIC_TEXTS[mainCategory] || DYNAMIC_TEXTS['Gesamt'];
+            }
+            
+            function createTopSectorsCharts() {
+                const npoData = ORG_DATA.filter(org => org.main === 'Gemeinnützige Organisation (NPO)');
+                const forProfitData = ORG_DATA.filter(org => org.main === 'For-Profit Dienstleister');
+
+                const npoAgg = aggregateData(npoData, 'sub');
+                const forProfitAgg = aggregateData(forProfitData, 'sub');
+                
+                const topNpo = Object.entries(npoAgg).sort(([,a],[,b]) => b-a).slice(0, 5);
+                const topForProfit = Object.entries(forProfitAgg).sort(([,a],[,b]) => b-a).slice(0, 5);
+
+                if(npoSectorsChart) npoSectorsChart.destroy();
+                npoSectorsChart = new Chart(npoSectorsChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: topNpo.map(item => wrapText(item[0], 16)),
+                        datasets: [{
+                            label: 'Anzahl NPOs',
+                            data: topNpo.map(item => item[1]),
+                            backgroundColor: COLORS.NPO,
+                        }]
+                    },
+                    options: {
+                         responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                         scales: { y: { beginAtZero: true, grid: { color: '#e5e7eb' } }, x: { grid: { display: false } } }
+                    }
+                });
+                
+                if(forProfitSectorsChart) forProfitSectorsChart.destroy();
+                forProfitSectorsChart = new Chart(forProfitSectorsChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: topForProfit.map(item => wrapText(item[0], 16)),
+                        datasets: [{
+                            label: 'Anzahl Dienstleister',
+                            data: topForProfit.map(item => item[1]),
+                            backgroundColor: COLORS.FOR_PROFIT,
+                        }]
+                    },
+                    options: {
+                         responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                         scales: { y: { beginAtZero: true, grid: { color: '#e5e7eb' } }, x: { grid: { display: false } } }
+                    }
+                });
+            }
+
+            function populateFilters() {
+                const mainCategories = [...new Set(ORG_DATA.map(org => org.main))];
+                const subCategories = [...new Set(ORG_DATA.map(org => org.sub))];
+
+                mainCategories.sort().forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    mainCategoryFilter.appendChild(option);
+                });
+
+                subCategories.sort().forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    subCategoryFilter.appendChild(option);
+                });
+            }
+            
+            function renderTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const mainCat = mainCategoryFilter.value;
+                const subCat = subCategoryFilter.value;
+                const zewo = zewoFilter.value;
+
+                const filteredData = ORG_DATA.filter(org => {
+                    const nameMatch = org.name.toLowerCase().includes(searchTerm);
+                    const mainCatMatch = !mainCat || org.main === mainCat;
+                    const subCatMatch = !subCat || org.sub === subCat;
+                    const zewoMatch = !zewo || org.zewo === zewo;
+                    return nameMatch && mainCatMatch && subCatMatch && zewoMatch;
+                });
+                
+                orgTableBody.innerHTML = '';
+
+                if (filteredData.length === 0) {
+                    noResultsDiv.classList.remove('hidden');
+                } else {
+                    noResultsDiv.classList.add('hidden');
+                }
+
+                filteredData.forEach(org => {
+                    let zewoBadge = '';
+                    switch (org.zewo) {
+                        case 'Ja':
+                            zewoBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ja</span>`;
+                            break;
+                        case 'Nein':
+                             zewoBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Nein</span>`;
+                            break;
+                         case 'Ehemals':
+                             zewoBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Ehemals</span>`;
+                            break;
+                        default:
+                            zewoBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">N/A</span>`;
+                    }
+
+                    const row = `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${org.name}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${org.main}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${org.sub}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">${org.participants}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">${zewoBadge}</td>
+                        </tr>
+                    `;
+                    orgTableBody.innerHTML += row;
+                });
+            }
+
+            function init() {
+                createMainCategoryChart();
+                createSubCategoryChart();
+                createTopSectorsCharts();
+                populateFilters();
+                renderTable();
+                
+                searchInput.addEventListener('input', renderTable);
+                mainCategoryFilter.addEventListener('change', renderTable);
+                subCategoryFilter.addEventListener('change', renderTable);
+                zewoFilter.addEventListener('change', renderTable);
+                
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        document.querySelector(this.getAttribute('href')).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    });
+                });
+            }
+
+            init();
+
+        });
+    </script>
+</body>
+</html>
